@@ -14,6 +14,9 @@ fi
 
 LINODE_TOKEN=$(cat "LINODE_TOKEN")
 
+# Set up the log file
+log_file="/var/log/ntfy-alerts/tos-alerts.log"
+
 # Calculate the timestamp for one hour ago in the format "YYYY-MM-DDTHH:mm:ss"
 # For Linux:
 # one_hour_ago=$(date -u -d '1 hour ago' +"%Y-%m-%dT%H:%M:%S")
@@ -34,6 +37,7 @@ summary=$(echo "$api_response" | jq -r '.data[0].summary')
 if [[ "$summary" == *"ToS Violation"* ]]; then
   curl -d "You got a new ToS ticket that needs to be reviewed." http://172-233-186-32.ip.linodeusercontent.com/tos-alerts
 else
-  echo "No new tickets with subject line starting with 'ToS Violation'."
+# Log the message with a timestamp
+  timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+  echo "$timestamp - No new tickets with subject line starting with 'ToS Violation'." >> "$log_file"
 fi
-
